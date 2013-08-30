@@ -41,23 +41,30 @@ public class TranslatorMojo extends AbstractMojo {
     @Parameter(defaultValue = "**/*.class")
     private String[] includes;
 
+    @Parameter(defaultValue = "false", property = "seven2six.transform.skip")
+    private boolean skip;
+
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-        final Translator translator = new Translator();
-        final File[] files = getFiles();
-
         final Log log = getLog();
-        if (log.isDebugEnabled()) {
-            final String newLine = String.format("%n\t");
-            final StringBuilder sb = new StringBuilder("Transforming Files:");
-            sb.append(newLine);
-            for (File file : files) {
-                sb.append(file.getAbsolutePath()).append(newLine);
-            }
-            log.debug(sb);
-        }
+        if (skip) {
+            log.info("Skipping seven2six transform");
+        } else {
+            final Translator translator = new Translator();
+            final File[] files = getFiles();
 
-        translator.transformRecursive(files);
+            if (log.isDebugEnabled()) {
+                final String newLine = String.format("%n\t");
+                final StringBuilder sb = new StringBuilder("Transforming Files:");
+                sb.append(newLine);
+                for (File file : files) {
+                    sb.append(file.getAbsolutePath()).append(newLine);
+                }
+                log.debug(sb);
+            }
+
+            translator.transformRecursive(files);
+        }
     }
 
     private File[] getFiles() {
