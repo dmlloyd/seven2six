@@ -25,8 +25,21 @@
     <groupId>org.jboss.seven2six</groupId>
     <artifactId>seven2six</artifactId>
     <version>1.0.Final-SNAPSHOT</version>
+    <packaging>maven-plugin</packaging>
 
     <properties>
+        <!-- Dependency versions -->
+        <version.junit.junit>4.11</version.junit.junit>
+        <version.org.apache.maven.maven-plugin>2.2.1</version.org.apache.maven.maven-plugin>
+        <version.org.apache.maven.maven-settings>3.0.5</version.org.apache.maven.maven-settings>
+        <version.org.apache.maven.plugin-api>3.0.5</version.org.apache.maven.plugin-api>
+        <version.org.apache.maven.plugin-tools>3.2</version.org.apache.maven.plugin-tools>
+        <version.org.apache.maven.plugins.plugin>3.2</version.org.apache.maven.plugins.plugin>
+        <version.org.apache.maven.plugins.site-plugin>3.2</version.org.apache.maven.plugins.site-plugin>
+        <version.org.apache.maven.plugins.maven-dependency-plugin>2.6</version.org.apache.maven.plugins.maven-dependency-plugin>
+        <version.org.apache.maven.shared.maven-filtering>1.1</version.org.apache.maven.shared.maven-filtering>
+        <version.org.codehaus.plexus.plexus-utils>3.0.10</version.org.codehaus.plexus.plexus-utils>
+
         <maven.compiler.source>1.7</maven.compiler.source>
         <maven.compiler.target>1.7</maven.compiler.target>
     </properties>
@@ -53,14 +66,94 @@
                     </archive>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-site-plugin</artifactId>
+                <version>${version.org.apache.maven.plugins.site-plugin}</version>
+                <configuration>
+                    <relativizeDecorationLinks>false</relativizeDecorationLinks>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-plugin-plugin</artifactId>
+                <version>${version.org.apache.maven.plugins.plugin}</version>
+                <configuration>
+                    <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>mojo-descriptor</id>
+                        <goals>
+                            <goal>descriptor</goal>
+                        </goals>
+                    </execution>
+                    <!-- if you want to generate help goal -->
+                    <execution>
+                        <id>help-goal</id>
+                        <goals>
+                            <goal>helpmojo</goal>
+                        </goals>
+                        <configuration>
+                            <helpPackageName>org.jboss.seven2six</helpPackageName>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
+
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-plugin-plugin</artifactId>
+                <version>${version.org.apache.maven.plugins.plugin}</version>
+            </plugin>
+        </plugins>
+    </reporting>
 
     <dependencies>
         <dependency>
             <groupId>org.ow2.asm</groupId>
             <artifactId>asm</artifactId>
             <version>4.1</version>
+        </dependency>
+
+        <!-- maven plugin dependencies -->
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-plugin-api</artifactId>
+            <version>${version.org.apache.maven.plugin-api}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-project</artifactId>
+            <version>${version.org.apache.maven.maven-plugin}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.maven.shared</groupId>
+            <artifactId>maven-filtering</artifactId>
+            <version>${version.org.apache.maven.shared.maven-filtering}</version>
+        </dependency>
+
+        <!-- dependencies to annotations -->
+        <dependency>
+            <groupId>org.apache.maven.plugin-tools</groupId>
+            <artifactId>maven-plugin-annotations</artifactId>
+            <version>${version.org.apache.maven.plugin-tools}</version>
+        </dependency>
+        <!-- generated help mojo has a dependency to plexus-utils -->
+        <dependency>
+            <groupId>org.codehaus.plexus</groupId>
+            <artifactId>plexus-utils</artifactId>
+            <version>${version.org.codehaus.plexus.plexus-utils}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-settings</artifactId>
+            <version>${version.org.apache.maven.maven-settings}</version>
         </dependency>
     </dependencies>
 </project>
