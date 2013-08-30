@@ -5,6 +5,8 @@ A bytecode transformer for turning JDK 7 class files into JDK 6 class files.  Th
 
 Note that usage of try-with-resources will not add suppressed exceptions when running on JDK 6; this will however work OK when running transformed classes on JDK 7.  Note also that this is not a "code weaver" in the sense that usage of JDK 7 API methods will cause an error at runtime when run in JDK 6, so appropriate safeguards should be in place for this situation.
 
+Note also that presence of the Java 7 "invokedynamic" instruction will raise a conversion error.
+
 Usage: Maven
 ------------
 Add a snippet like this to your pom.xml:
