@@ -81,7 +81,9 @@ public final class Translator implements ClassFileTransformer {
             } else if (file.getName().endsWith(".class")) {
                 try {
                     transform(new RandomAccessFile(file, "rw"));
-                } catch (IllegalClassFormatException | IOException e) {
+                } catch (IllegalClassFormatException e) {
+                    System.err.println("Failed to transform " + file + ": " + e);
+                } catch (IOException e) {
                     System.err.println("Failed to transform " + file + ": " + e);
                 }
             }

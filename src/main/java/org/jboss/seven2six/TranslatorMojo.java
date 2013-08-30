@@ -61,7 +61,7 @@ public class TranslatorMojo extends AbstractMojo {
     }
 
     private File[] getFiles() {
-        final List<File> result = new ArrayList<>();
+        final List<File> result = new ArrayList<File>();
         final DirectoryScanner scanner = new DirectoryScanner();
         scanner.setBasedir(outputDirectory);
         scanner.setIncludes(includes);
