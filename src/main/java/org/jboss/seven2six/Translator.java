@@ -41,6 +41,7 @@ import org.objectweb.asm.Opcodes;
  * Translate JDK 7 classes to JDK 6.
  *
  * @author <a href="mailto:david.lloyd@redhat.com">David M. Lloyd</a>
+ * @author Kabir Khan
  */
 public final class Translator implements ClassFileTransformer {
 
