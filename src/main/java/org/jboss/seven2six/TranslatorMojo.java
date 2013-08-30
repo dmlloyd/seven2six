@@ -30,13 +30,13 @@ public class TranslatorMojo extends AbstractMojo {
     /**
      * File patterns to include when processing
      */
-    @Parameter
+    @Parameter(property = "seven2six.excludes")
     private String[] excludes;
 
     /**
      * File patterns to exclude when processing
      */
-    @Parameter(defaultValue = "**/*.class")
+    @Parameter(defaultValue = "**/*.class", property = "seven2six.includes")
     private String[] includes;
 
     @Parameter(defaultValue = "false", property = "seven2six.transform.skip")
