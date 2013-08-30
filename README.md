@@ -16,7 +16,7 @@ Add a snippet like this to your pom.xml:
             <plugin>
                 <groupId>org.jboss.seven2six</groupId>
                 <artifactId>seven2six</artifactId>
-                <version>1.0.Final</version>
+                <version>1.1.Final</version>
                 <executions>
                     <execution>
                         <id>weave</id>
