@@ -33,6 +33,7 @@ import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Handle;
+import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
@@ -90,14 +91,28 @@ public final class Translator implements ClassFileTransformer {
 
     public byte[] transform(final ClassLoader loader, final String className, final Class<?> classBeingRedefined, final ProtectionDomain protectionDomain, final byte[] classfileBuffer) throws IllegalClassFormatException {
         ClassWriter classWriter = new ClassWriter(0);
-        new ClassReader(classfileBuffer).accept(new TranslatingClassVisitor(classWriter), 0);
+        final ClassReader classReader = new ClassReader(classfileBuffer);
+        doAccept(classWriter, classReader);
         return classWriter.toByteArray();
     }
 
     public byte[] transform(final InputStream input) throws IllegalClassFormatException, IOException {
         ClassWriter classWriter = new ClassWriter(0);
-        new ClassReader(input).accept(new TranslatingClassVisitor(classWriter), 0);
+        final ClassReader classReader = new ClassReader(input);
+        doAccept(classWriter, classReader);
         return classWriter.toByteArray();
+    }
+
+    private void doAccept(final ClassWriter classWriter, final ClassReader classReader) throws IllegalClassFormatException {
+        try {
+            classReader.accept(new TranslatingClassVisitor(classWriter), 0);
+        } catch (RuntimeException e) {
+            final Throwable cause = e.getCause();
+            if (cause instanceof IllegalClassFormatException) {
+                throw (IllegalClassFormatException) cause;
+            }
+            throw e;
+        }
     }
 
     public void transform(final InputStream input, final OutputStream output) throws IllegalClassFormatException, IOException {
@@ -143,16 +158,26 @@ public final class Translator implements ClassFileTransformer {
             final MethodVisitor defaultVisitor = super.visitMethod(access, name, desc, signature, exceptions);
             return new MethodVisitor(Opcodes.ASM4, defaultVisitor) {
                 public void visitInvokeDynamicInsn(final String name, final String desc, final Handle bsm, final Object... bsmArgs) {
-                    // todo: fail
-                    super.visitInvokeDynamicInsn(name, desc, bsm, bsmArgs);
+                    throw new RuntimeException(new IllegalClassFormatException("invokedynamic is unsupported"));
                 }
 
                 public void visitMethodInsn(final int opcode, final String owner, final String name, final String desc) {
-                    // todo: detect try-with-resources
-//                    if (name.equals("addSuppressed")) {
-//                        ...
-//                    }
-                    super.visitMethodInsn(opcode, owner, name, desc);
+                    if (name.equals("addSuppressed") && owner.equals("java/lang/Throwable")) {
+                        final Label start = new Label();
+                        final Label end = new Label();
+                        final Label eh = new Label();
+                        final Label cont = new Label();
+                        super.visitTryCatchBlock(start, end, eh, "java/lang/NoSuchMethodError");
+                        super.visitLabel(start);
+                        super.visitMethodInsn(opcode, owner, name, desc);
+                        super.visitLabel(end);
+                        super.visitJumpInsn(Opcodes.GOTO, cont);
+                        super.visitLabel(eh);
+                        super.visitInsn(Opcodes.POP);
+                        super.visitLabel(cont);
+                    } else {
+                        super.visitMethodInsn(opcode, owner, name, desc);
+                    }
                 }
             };
         }
