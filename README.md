@@ -16,7 +16,7 @@ Add a snippet like this to your pom.xml:
             <plugin>
                 <groupId>org.jboss.seven2six</groupId>
                 <artifactId>seven2six</artifactId>
-                <version>1.1.Final</version>
+                <version>1.2.Final</version>
                 <executions>
                     <!-- run after "compile", lets your artifact work on 1.6 -->
                     <execution>
