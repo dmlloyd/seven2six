@@ -25,10 +25,22 @@ Add a snippet like this to your pom.xml:
                             <goal>transform</goal>
                         </goals>
                     </execution>
+                    <execution>
+                        <id>weave-tests</id>
+                        <phase>process-test-classes</phase>
+                        <goals>
+                            <goal>transform</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.testOutputDirectory}</outputDirectory>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
         </plugins>
     </build>
+
+_Note that a separate execution is needed if you want your test classes to be transformed._
 
 Make sure your compiler plugin is set to compile for 1.7.  Your final output will be 1.6.
 
